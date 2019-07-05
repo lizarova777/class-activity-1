@@ -1,0 +1,61 @@
+---
+title: "Class Activity 1"
+author: "Anna Lizarov"
+date: "September 20, 2018"
+output: html_document
+---
+
+# Libraries
+```{r}
+library(tidyr)
+library(dplyr)
+```
+
+# Datasets
+```{r}
+DF <- read.csv("swirl-data.csv", header=TRUE) 
+DF1 <- data.frame(DF) %>% print    #don't need
+```
+```{r}
+DF2 <- select(DF1, hash, lesson_name, attempt)
+DF2
+```
+```{r}
+DF3 <- DF2 %>% group_by(hash, lesson_name) %>% summarize(total=sum(attempt)) %>% print
+```
+```{r}
+#1st way of doing it
+DF4 <- select(DF1,hash,correct) %>% mutate(correct=as.logical(correct))%>% mutate(correct=as.numeric(correct)) %>% group_by(hash) %>% summarize (mean_correct= mean(correct, na.rm=TRUE)) %>% print
+
+```
+
+```{r}
+#10 (2nd way of doing)
+DF3$correct <- ifelse(DF3$correct==TRUE,1,
+                      ifelse(DF3$correct == NA, NA, 0))
+DF3 <- na.omit(DF3) #get rids of NAs
+table(DF3$correct)
+summary(DF3$correct)
+```
+
+```{r}
+# 2nd way of doing it
+DF4 <- select(DF1,hash,correct) %>% group_by(hash) %>% summarize (mean_correct= mean(correct, na.rm=TRUE)) %>% print
+```
+
+```{r}
+# Date Time Variable
+DF5 <- select(DF1, datetime, correct) %>% mutate(correct=as.logical(correct))%>% mutate(correct=as.numeric(correct))%>% mutate(datetime= format(as.POSIXct(datetime,origin = "1970-01-01"), "%B %d %Y")) %>% group_by(datetime) %>% summarize(mean_correct=mean(correct, na.rm=TRUE))  %>% print
+```
+
+```{r}
+#7/8
+DF3A <- DF3 %>% spread(lesson_name, total) %>% print
+```
+```{r}
+#2nd way of converting date-time variable
+DF6$datetime= as.POSIXlt(DF6$Ddatetime, origin= "1970-01-01 00:00:00 UTC")
+
+                        
+```
+
